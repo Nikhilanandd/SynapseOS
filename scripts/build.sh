@@ -21,19 +21,19 @@ build_main() {
     log_stage "Validating Environment"
     validate || { log_error "Validation failed"; exit 1; }
 
-    if [ "$clean_first" = "true" ]; then
-        log_stage "Cleaning (--clean requested)"
-        sudo lb clean --purge 2>/dev/null || true
-    else
-        log_stage "Cleaning Previous Build Artifacts"
-        sudo lb clean 2>/dev/null || true
-    fi
-
     export PATH="${PATH}:/usr/sbin:/sbin"
     export LB_ISO_APPLICATION="SynapseOS"
     export LB_ISO_PREPARER="SynapseOS Build System"
     export LB_ISO_PUBLISHER="SynapseOS Project"
     export LB_ISO_VOLUME="SynapseOS ${version}"
+
+    if [ "$clean_first" = "true" ]; then
+        log_stage "Clean Build Requested"
+        log_info "Purging caches and reconfiguring..."
+        sudo lb clean --purge 2>/dev/null || true
+        sudo lb config 2>&1 | tee -a "$LOG_FILE" || \
+            { log_error "lb config failed"; exit 1; }
+    fi
 
     log_stage "Running live-build"
     log_info "This may take a while. See ${LOG_FILE} for details."

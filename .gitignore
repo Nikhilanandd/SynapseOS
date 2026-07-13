@@ -1,0 +1,37 @@
+# Build output
+output/
+
+# Live-build artifacts
+cache/
+chroot/
+binary/
+tmp/
+.build/
+
+# ISO images
+*.iso
+*.img
+
+# Logs
+*.log
+
+# Cache files
+*.cache
+
+# Squashfs
+*.squashfs
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Editor artifacts
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.pyc

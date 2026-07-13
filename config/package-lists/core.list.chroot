@@ -1,0 +1,8 @@
+sudo
+curl
+wget
+git
+vim
+build-essential
+htop
+net-tools

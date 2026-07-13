@@ -29,6 +29,7 @@ build_main() {
         sudo lb clean 2>/dev/null || true
     fi
 
+    export PATH="${PATH}:/usr/sbin:/sbin"
     export LB_ISO_APPLICATION="SynapseOS"
     export LB_ISO_PREPARER="SynapseOS Build System"
     export LB_ISO_PUBLISHER="SynapseOS Project"

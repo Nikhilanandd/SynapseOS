@@ -35,10 +35,12 @@ ensure_root() {
 
 ensure_command() {
     local cmd="$1"
-    if ! command -v "$cmd" &>/dev/null; then
-        echo "Required command not found: $cmd" >&2
-        exit 1
-    fi
+    command -v "$cmd" &>/dev/null && return 0
+    for dir in /usr/sbin /usr/bin /sbin /bin; do
+        [ -x "${dir}/${cmd}" ] && return 0
+    done
+    echo "Required command not found: ${cmd}" >&2
+    exit 1
 }
 
 check_disk() {

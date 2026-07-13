@@ -9,6 +9,15 @@ if [ -z "${PROJECT_ROOT:-}" ]; then
     PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 fi
 
+_find_cmd() {
+    local cmd="$1"
+    command -v "$cmd" &>/dev/null && return 0
+    for dir in /usr/sbin /usr/bin /sbin /bin; do
+        [ -x "${dir}/${cmd}" ] && return 0
+    done
+    return 1
+}
+
 validate() {
     local errors=0
 
@@ -16,11 +25,11 @@ validate() {
 
     local required_commands=(lb sudo debootstrap mksquashfs xorriso dpkg git)
     for cmd in "${required_commands[@]}"; do
-        if ! command -v "$cmd" &>/dev/null; then
+        if _find_cmd "$cmd"; then
+            echo "  OK:      ${cmd}"
+        else
             echo "  MISSING: ${cmd}"
             errors=$((errors + 1))
-        else
-            echo "  OK:      ${cmd}"
         fi
     done
 

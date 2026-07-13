@@ -36,18 +36,35 @@ build_main() {
     log_stage "Configuring live-build"
     sudo lb config 2>&1 | tee -a "$LOG_FILE" || \
         { log_error "lb config failed"; exit 1; }
+
+    # Inject build-time overrides into .build/config so they take effect in lb build
+    if [ -f .build/config ]; then
+        sudo tee -a .build/config > /dev/null << EOF
+LB_ISO_APPLICATION="${LB_ISO_APPLICATION}"
+LB_ISO_PREPARER="${LB_ISO_PREPARER}"
+LB_ISO_PUBLISHER="${LB_ISO_PUBLISHER}"
+LB_ISO_VOLUME="${LB_ISO_VOLUME}"
+EOF
+    fi
     sudo chown -R "$(whoami)" .build config local 2>/dev/null || true
 
     log_stage "Running live-build"
     log_info "This may take a while. See ${LOG_FILE} for details."
     log_info "Distribution: bookworm, Architecture: amd64"
 
-    if sudo lb build 2>&1 | tee -a "$LOG_FILE"; then
+    local lb_exit=0
+    sudo lb build 2>&1 | tee -a "$LOG_FILE" || lb_exit=$?
+
+    if [ "$lb_exit" -eq 0 ]; then
         log_info "live-build completed successfully"
     else
         log_error "live-build failed. Check ${LOG_FILE} for details."
+        sudo lb clean 2>/dev/null || true
         exit 1
     fi
+
+    # Clean up root-owned build artifacts so next checkout doesn't fail
+    sudo lb clean 2>/dev/null || true
 
     local iso_file
     iso_file=$(find "${PROJECT_ROOT}" -maxdepth 1 -name "*.iso" -type f | head -1)

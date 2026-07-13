@@ -80,7 +80,8 @@ LB_ISO_PREPARER="SynapseOS Build System"
 LB_ISO_PUBLISHER="SynapseOS Project"
 
 # Set iso volume (max 32 chars)
-LB_ISO_VOLUME="SynapseOS bookworm @ISOVOLUME_TS@"
+# Overridden by build.sh at build time with version string
+LB_ISO_VOLUME="SynapseOS"
 
 # Set jffs2 eraseblock size
 LB_JFFS2_ERASEBLOCK=""

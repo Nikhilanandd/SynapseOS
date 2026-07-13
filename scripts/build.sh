@@ -59,11 +59,13 @@ EOF
         log_info "live-build completed successfully"
     else
         log_error "live-build failed. Check ${LOG_FILE} for details."
+        sudo umount -lf chroot/dev chroot/proc chroot/sys chroot/run 2>/dev/null || true
         sudo lb clean 2>/dev/null || true
         exit 1
     fi
 
     # Clean up root-owned build artifacts so next checkout doesn't fail
+    sudo umount -lf chroot/dev chroot/proc chroot/sys chroot/run 2>/dev/null || true
     sudo lb clean 2>/dev/null || true
 
     local iso_file

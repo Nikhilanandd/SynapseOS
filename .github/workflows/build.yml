@@ -14,7 +14,10 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Clean Workspace
-        run: sudo rm -rf .build cache chroot binary output local
+        run: |
+          sudo umount -lf chroot/dev chroot/proc chroot/sys chroot/run 2>/dev/null || true
+          sudo umount -lf .build/ 2>/dev/null || true
+          sudo rm -rf .build cache chroot binary output local
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -26,7 +29,10 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Clean Workspace
-        run: sudo rm -rf .build cache chroot binary output local
+        run: |
+          sudo umount -lf chroot/dev chroot/proc chroot/sys chroot/run 2>/dev/null || true
+          sudo umount -lf .build/ 2>/dev/null || true
+          sudo rm -rf .build cache chroot binary output local
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -40,7 +46,10 @@ jobs:
           retention-days: 30
       - name: Post-Build Cleanup
         if: always()
-        run: sudo rm -rf .build cache chroot binary output local
+        run: |
+          sudo umount -lf chroot/dev chroot/proc chroot/sys chroot/run 2>/dev/null || true
+          sudo umount -lf .build/ 2>/dev/null || true
+          sudo rm -rf .build cache chroot binary output local
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')

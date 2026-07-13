@@ -36,6 +36,7 @@ build_main() {
     log_stage "Configuring live-build"
     sudo lb config 2>&1 | tee -a "$LOG_FILE" || \
         { log_error "lb config failed"; exit 1; }
+    sudo chown -R "$(whoami)" .build config 2>/dev/null || true
 
     log_stage "Running live-build"
     log_info "This may take a while. See ${LOG_FILE} for details."
@@ -91,6 +92,8 @@ build_main() {
     log_info "Packages:      ${packages}"
     log_info "Output:        ${OUTPUT_DIR}"
     log_info "Build Log:     ${LOG_FILE}"
+
+    sudo chown -R "$(whoami)" .build config 2>/dev/null || true
 
     echo ""
     echo "========================================"

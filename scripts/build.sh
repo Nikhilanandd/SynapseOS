@@ -29,11 +29,13 @@ build_main() {
 
     if [ "$clean_first" = "true" ]; then
         log_stage "Clean Build Requested"
-        log_info "Purging caches and reconfiguring..."
+        log_info "Purging caches..."
         sudo lb clean --purge 2>/dev/null || true
-        sudo lb config 2>&1 | tee -a "$LOG_FILE" || \
-            { log_error "lb config failed"; exit 1; }
     fi
+
+    log_stage "Configuring live-build"
+    sudo lb config 2>&1 | tee -a "$LOG_FILE" || \
+        { log_error "lb config failed"; exit 1; }
 
     log_stage "Running live-build"
     log_info "This may take a while. See ${LOG_FILE} for details."

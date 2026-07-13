@@ -13,6 +13,8 @@ jobs:
   validate:
     runs-on: self-hosted
     steps:
+      - name: Clean Workspace
+        run: sudo rm -rf .build cache chroot binary output || true
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -23,6 +25,8 @@ jobs:
     needs: validate
     runs-on: self-hosted
     steps:
+      - name: Clean Workspace
+        run: sudo rm -rf .build cache chroot binary output || true
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0

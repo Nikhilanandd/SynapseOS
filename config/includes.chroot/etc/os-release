@@ -1,0 +1,11 @@
+PRETTY_NAME="SynapseOS 1.0 (Bookworm)"
+NAME="SynapseOS"
+VERSION_ID="1.0"
+VERSION="1.0 (Bookworm)"
+VERSION_CODENAME=bookworm
+ID=synapseos
+ID_LIKE=debian
+HOME_URL="https://github.com/Nikhilanandd/SynapseOS"
+SUPPORT_URL="https://github.com/Nikhilanandd/SynapseOS/issues"
+BUG_REPORT_URL="https://github.com/Nikhilanandd/SynapseOS/issues"
+LOGO=synapseos

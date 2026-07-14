@@ -17,7 +17,7 @@ jobs:
         run: |
           sudo umount -lf chroot/dev chroot/proc chroot/sys chroot/run 2>/dev/null || true
           sudo umount -lf .build/ 2>/dev/null || true
-          sudo rm -rf .build cache chroot binary output local
+          sudo rm -rf .build chroot binary output local
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -32,12 +32,21 @@ jobs:
         run: |
           sudo umount -lf chroot/dev chroot/proc chroot/sys chroot/run 2>/dev/null || true
           sudo umount -lf .build/ 2>/dev/null || true
-          sudo rm -rf .build cache chroot binary output local
+          sudo rm -rf .build chroot binary output local
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Build SynapseOS
         run: sudo ./build.sh
+      - name: QEMU Boot Test
+        continue-on-error: true
+        run: |
+          if [ -e /dev/kvm ]; then
+            sudo apt-get install -y -qq qemu-system-x86 qemu-kvm ovmf
+            ./scripts/test-qemu.sh
+          else
+            echo "KVM not available, skipping boot test"
+          fi
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -49,7 +58,8 @@ jobs:
         run: |
           sudo umount -lf chroot/dev chroot/proc chroot/sys chroot/run 2>/dev/null || true
           sudo umount -lf .build/ 2>/dev/null || true
-          sudo rm -rf .build cache chroot binary output local
+          sudo rm -rf .build chroot binary output local
+          # Keep cache/ for incremental builds
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')

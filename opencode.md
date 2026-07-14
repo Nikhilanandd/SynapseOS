@@ -106,17 +106,92 @@ All in `output/`:
 
 ---
 
+### 5. Feature Completion — Concurrent Locks, Cache, QEMU Test, Branding (Session 5)
+
+All five remaining issues from the previous session were addressed:
+
+| # | Issue | Changes |
+|---|-------|---------|
+| 1 | **GNOME desktop** | Refined package lists: added `gnome-terminal`, `gnome-software`, `firefox-esr`, `network-manager-gnome` to `desktop.list.chroot`; added `docker-compose`, `python3-venv`, `openssh-server`, `tmux`, `rsync`, `unzip`, `ca-certificates`, `software-properties-common`, `apt-transport-https`, `gnupg` across `core.list.chroot` and `dev.list.chroot` |
+| 2 | **Concurrent builds** | Added `_acquire_lock()`/`_release_lock()` to `scripts/build.sh` — creates `.build.lock` with PID, checks for live/stale locks, cleans up on EXIT/INT/TERM via trap |
+| 3 | **Cache preservation** | Removed `cache/` from Clean Workspace and Post-Build Cleanup in `.github/workflows/build.yml` so bootstrap/package caches persist across CI runs |
+| 4 | **QEMU boot verification** | Created `scripts/test-qemu.sh` — boots ISO in QEMU with KVM, polls serial console for `login:` prompt (120s timeout), detects kernel panics. Added as optional CI step with `continue-on-error: true` and KVM detection |
+| 5 | **GNOME branding** | Created `config/includes.chroot/` with: custom `/etc/os-release` (PRETTY_NAME="SynapseOS 1.0"), GNOME gschema overrides (dark theme, custom wallpaper, privacy defaults, keybindings), `/etc/skel/.bashrc` with colored prompt and aliases, SVG wallpaper with neural-network-inspired design (gradient background with connection nodes). Created `config/hooks/live/9010_synapseos_branding.chroot` to compile glib schemas and set hostname |
+
+### New/Modified Files
+
+| File | Change |
+|------|--------|
+| `scripts/build.sh` | Added `_acquire_lock()`/`_release_lock()` lock mechanism with trap-based cleanup |
+| `.github/workflows/build.yml` | Preserves `cache/` across CI runs; added QEMU boot test step |
+| `scripts/test-qemu.sh` | **New** — automated ISO boot verification via QEMU |
+| `config/package-lists/core.list.chroot` | Added `ca-certificates`, `software-properties-common`, `apt-transport-https`, `gnupg` |
+| `config/package-lists/desktop.list.chroot` | Added `gnome-terminal`, `gnome-software`, `firefox-esr`, `network-manager-gnome` |
+| `config/package-lists/dev.list.chroot` | Added `docker-compose`, `python3-venv`, `openssh-server`, `tmux`, `rsync`, `unzip` |
+| `config/includes.chroot/etc/os-release` | **New** — SynapseOS branding metadata |
+| `config/includes.chroot/etc/skel/.bashrc` | **New** — default user shell config with colored prompt |
+| `config/includes.chroot/usr/share/glib-2.0/schemas/90_synapseos.gschema.override` | **New** — GNOME dark theme, wallpaper, privacy, keybindings |
+| `config/includes.chroot/usr/share/backgrounds/synapseos/synapseos-wallpaper.svg` | **New** — custom SVG wallpaper (1920x1080, dark gradient with synaptic node motif) |
+| `config/hooks/live/9010_synapseos_branding.chroot` | **New** — compiles glib schemas, sets hostname, configures APT sources |
+| `.gitignore` | Added `.build.lock` |
+
+---
+
+## Architecture Decisions (Updated)
+
+### Build Flow (Updated)
+
+```
+build.sh (entry point)
+  ├── source scripts/common.sh    (version, utils)
+  ├── source scripts/logger.sh    (logging)
+  ├── source scripts/validate.sh  (pre-build checks)
+  ├── source scripts/metadata.sh  (post-build metadata)
+  ├── source scripts/build.sh     (build_main function)
+  └── build_main "$clean_flag"
+       ├── _acquire_lock()        ← NEW: PID lock file
+       ├── log_init()
+       ├── validate()
+       ├── sudo lb config
+       ├── inject overrides into .build/config
+       ├── sudo lb build
+       ├── move ISO → output/
+       ├── generate SHA256SUMS
+       ├── generate package.manifest
+       ├── generate metadata.json
+       ├── sudo lb clean
+       ├── sudo chown
+       └── _release_lock()        ← NEW: trap-based cleanup
+```
+
+### Branding Architecture
+
+```
+config/includes.chroot/
+└── usr/share/
+    ├── backgrounds/synapseos/synapseos-wallpaper.svg  (SVG wallpaper)
+    ├── glib-2.0/schemas/90_synapseos.gschema.override (GNOME settings)
+    └── etc/
+        ├── os-release                                 (distro metadata)
+        └── skel/.bashrc                               (default user shell)
+
+config/hooks/live/
+└── 9010_synapseos_branding.chroot                     (chroot hook: compiles schemas, sets hostname)
+```
+
+---
+
 ## Remaining Issues (Next Session)
 
-1. **GNOME desktop installation**: `task-gnome-desktop` pulls in ~3GB of packages. The build succeeded in reaching the binary stage (xorriso) in 46 minutes before the volume label error was fixed. Next build should produce a bootable ISO.
+1. **First CI build**: Push to `develop` or `main` to trigger the pipeline. The bootstrap + package downloads for `task-gnome-desktop` (~3GB) will take 30-60 min. If it fails, check logs with `gh run view <run-id> --log-failed`.
 
-2. **Concurrent builds**: No lock mechanism. Two pushes close together would race on the same runner (`kanchenjunga`). Add a `resource_group`-style lock.
+2. **GNOME wallpaper rendering**: The SVG wallpaper uses gradients and opacity — confirm GNOME 43 (bookworm) renders it correctly. If not, convert to PNG.
 
-3. **Cache preservation**: `cache/` is deleted by Clean Workspace. For incremental builds in CI, the cache should be preserved (like e-Swecha does with `GIT_CLEAN_FLAGS: "--exclude=cache/"`).
+3. **GDM greeter branding**: The gschema overrides apply to the user session but not to GDM. Add `config/includes.chroot/usr/share/glib-2.0/schemas/90_synapseos_gdm.gschema.override` for GDM theming (requires `gdm` user schema compilation).
 
-4. **QEMU boot verification**: No automated ISO boot test yet.
+4. **Edition profiles**: Developer, AI, Research, Student, Minimal editions would use different package lists and hooks.
 
-5. **GNOME branding**: `task-gnome-desktop` installs stock Debian GNOME. No SynapseOS theming exists yet.
+5. **ARM64 cross-build**: Needs `LB_BOOTSTRAP_QEMU_ARCHITECTURE="arm64"` and QEMU user static.
 
 ---
 

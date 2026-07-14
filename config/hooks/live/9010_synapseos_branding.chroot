@@ -1,0 +1,26 @@
+#!/bin/bash
+# SynapseOS branding hook
+# Runs inside the chroot during live-build to apply branding customization.
+
+set -e
+
+# Set hostname
+echo "synapseos" > /etc/hostname
+
+# Copy skel files to root user
+cp -r /etc/skel/. /root/
+
+# Ensure Debian bookworm APT sources
+cat > /etc/apt/sources.list << EOF
+deb http://deb.debian.org/debian bookworm main contrib non-free non-firmware
+deb http://deb.debian.org/debian bookworm-updates main contrib non-free non-firmware
+deb http://security.debian.org/ bookworm-security main contrib non-free non-firmware
+EOF
+
+# Compile glib schemas override
+if [ -f /usr/share/glib-2.0/schemas/90_synapseos.gschema.override ]; then
+    glib-compile-schemas /usr/share/glib-2.0/schemas/ 2>/dev/null || true
+fi
+
+# Remove unnecessary packages to save space
+apt-get clean

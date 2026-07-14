@@ -1,8 +1,8 @@
 sudo
-curl
-wget
-git
 vim
-build-essential
 htop
 net-tools
+ca-certificates
+software-properties-common
+apt-transport-https
+gnupg

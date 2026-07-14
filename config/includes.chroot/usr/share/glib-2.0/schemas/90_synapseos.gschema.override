@@ -1,0 +1,46 @@
+[org.gnome.desktop.background]
+picture-uri='file:///usr/share/backgrounds/synapseos/synapseos-wallpaper.svg'
+picture-uri-dark='file:///usr/share/backgrounds/synapseos/synapseos-wallpaper.svg'
+picture-options='zoom'
+primary-color='#1a1a2e'
+secondary-color='#16213e'
+
+[org.gnome.desktop.interface]
+color-scheme='prefer-dark'
+gtk-theme='Adwaita-dark'
+icon-theme='Adwaita'
+font-name='Cantarell 11'
+document-font-name='Cantarell 11'
+monospace-font-name='Source Code Pro 10'
+
+[org.gnome.desktop.screensaver]
+picture-uri='file:///usr/share/backgrounds/synapseos/synapseos-wallpaper.svg'
+lock-delay=uint32 0
+
+[org.gnome.desktop.session]
+idle-delay=uint32 300
+
+[org.gnome.desktop.privacy]
+report-technical-problems=false
+send-software-usage-stats=false
+old-files-age=uint32 30
+recent-files-max-age=30
+
+[org.gnome.shell]
+favorite-apps=['org.gnome.Nautilus.desktop', 'firefox-esr.desktop', 'org.gnome.Terminal.desktop', 'org.gnome.Software.desktop']
+
+[org.gnome.nautilus.preferences]
+default-folder-viewer='list-view'
+search-view='list-view'
+click-policy='single'
+
+[org.gnome.Terminal.Legacy.Settings]
+default-show-menubar=false
+
+[org.gnome.settings-daemon.plugins.media-keys]
+custom-keybindings=['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']
+
+[org.gnome.settings-daemon.plugins.media-keys.custom-keybindings.custom0]
+name='Terminal'
+command='gnome-terminal'
+binding='<Primary><Alt>t'

@@ -1,3 +1,7 @@
 task-gnome-desktop
 gdm3
 gnome-shell
+gnome-terminal
+gnome-software
+firefox-esr
+network-manager-gnome

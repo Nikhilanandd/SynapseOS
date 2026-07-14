@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f0c29"/>
+      <stop offset="50%" stop-color="#302b63"/>
+      <stop offset="100%" stop-color="#24243e"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#00d2ff"/>
+      <stop offset="100%" stop-color="#3a7bd5"/>
+    </linearGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+  <circle cx="960" cy="440" r="180" fill="none" stroke="url(#accent)" stroke-width="2" opacity="0.3"/>
+  <circle cx="960" cy="440" r="120" fill="none" stroke="url(#accent)" stroke-width="1.5" opacity="0.4"/>
+  <circle cx="960" cy="440" r="60" fill="url(#accent)" opacity="0.15"/>
+  <circle cx="960" cy="440" r="8" fill="#00d2ff" opacity="0.8"/>
+  <g stroke="#00d2ff" stroke-width="1" opacity="0.25">
+    <line x1="960" y1="440" x2="720" y2="280"/>
+    <line x1="960" y1="440" x2="1200" y2="280"/>
+    <line x1="960" y1="440" x2="720" y2="600"/>
+    <line x1="960" y1="440" x2="1200" y2="600"/>
+    <line x1="960" y1="440" x2="600" y2="440"/>
+    <line x1="960" y1="440" x2="1320" y2="440"/>
+    <line x1="960" y1="440" x2="960" y2="200"/>
+    <line x1="960" y1="440" x2="960" y2="680"/>
+  </g>
+  <g fill="#00d2ff" opacity="0.4">
+    <circle cx="720" cy="280" r="4"/>
+    <circle cx="1200" cy="280" r="4"/>
+    <circle cx="720" cy="600" r="4"/>
+    <circle cx="1200" cy="600" r="4"/>
+    <circle cx="600" cy="440" r="4"/>
+    <circle cx="1320" cy="440" r="4"/>
+    <circle cx="960" cy="200" r="4"/>
+    <circle cx="960" cy="680" r="4"/>
+  </g>
+  <g stroke="#3a7bd5" stroke-width="0.5" opacity="0.15">
+    <line x1="720" y1="280" x2="600" y2="440"/>
+    <line x1="720" y1="280" x2="720" y2="600"/>
+    <line x1="1200" y1="280" x2="1200" y2="600"/>
+    <line x1="720" y1="600" x2="600" y2="440"/>
+    <line x1="720" y1="600" x2="960" y2="680"/>
+    <line x1="1200" y1="600" x2="960" y2="680"/>
+    <line x1="720" y1="280" x2="960" y2="200"/>
+    <line x1="1200" y1="280" x2="960" y2="200"/>
+  </g>
+  <text x="960" y="800" font-family="Cantarell, sans-serif" font-size="48" fill="#00d2ff" text-anchor="middle" opacity="0.6" letter-spacing="8">SYNAPSEOS</text>
+  <text x="960" y="840" font-family="Cantarell, sans-serif" font-size="16" fill="#3a7bd5" text-anchor="middle" opacity="0.4" letter-spacing="4">AI-NATIVE OPERATING SYSTEM</text>
+  <g stroke="#00d2ff" stroke-width="0.5" opacity="0.05">
+    <line x1="100" y1="0" x2="100" y2="1080"/>
+    <line x1="200" y1="0" x2="200" y2="1080"/>
+    <line x1="300" y1="0" x2="300" y2="1080"/>
+    <line x1="400" y1="0" x2="400" y2="1080"/>
+    <line x1="500" y1="0" x2="500" y2="1080"/>
+    <line x1="600" y1="0" x2="600" y2="1080"/>
+    <line x1="700" y1="0" x2="700" y2="1080"/>
+    <line x1="800" y1="0" x2="800" y2="1080"/>
+    <line x1="900" y1="0" x2="900" y2="1080"/>
+    <line x1="1000" y1="0" x2="1000" y2="1080"/>
+    <line x1="1100" y1="0" x2="1100" y2="1080"/>
+    <line x1="1200" y1="0" x2="1200" y2="1080"/>
+    <line x1="1300" y1="0" x2="1300" y2="1080"/>
+    <line x1="1400" y1="0" x2="1400" y2="1080"/>
+    <line x1="1500" y1="0" x2="1500" y2="1080"/>
+    <line x1="1600" y1="0" x2="1600" y2="1080"/>
+    <line x1="1700" y1="0" x2="1700" y2="1080"/>
+    <line x1="1800" y1="0" x2="1800" y2="1080"/>
+  </g>
+</svg>

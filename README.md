@@ -170,7 +170,10 @@ Hotfixes follow the same process from a maintenance branch.
 - [x] Build infrastructure (live-build, validation, logging)
 - [x] CI/CD pipeline with artifact publishing
 - [x] Semantic versioning and release automation
-- [ ] Desktop profiles (GNOME, KDE, Sway)
+- [x] Desktop profiles (GNOME)
+- [x] SynapseOS branding (wallpaper, theming, os-release)
+- [x] QEMU boot verification
+- [ ] Desktop profiles (KDE, Sway)
 - [ ] Edition profiles (Developer, AI Edition, Student, Research)
 - [ ] NVIDIA GPU driver integration
 - [ ] AI/ML toolchain pre-installation

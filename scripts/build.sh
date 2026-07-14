@@ -2,6 +2,26 @@
 # This file is sourced by the root build.sh entry point.
 # Contains the main build logic: validation, live-build, artifact management.
 
+LOCK_FILE="${PROJECT_ROOT}/.build.lock"
+
+_acquire_lock() {
+    if [ -f "$LOCK_FILE" ]; then
+        local pid
+        pid=$(cat "$LOCK_FILE" 2>/dev/null || echo 0)
+        if [ "$pid" -gt 0 ] && kill -0 "$pid" 2>/dev/null; then
+            log_error "Build already in progress (PID: ${pid}). Lock file: ${LOCK_FILE}"
+            exit 1
+        fi
+        log_warn "Stale lock file found (PID: ${pid:-unknown}). Removing."
+    fi
+    echo "$$" > "$LOCK_FILE"
+    trap '_release_lock' EXIT INT TERM
+}
+
+_release_lock() {
+    rm -f "$LOCK_FILE"
+}
+
 build_main() {
     local clean_first="${1:-false}"
 
@@ -17,6 +37,7 @@ build_main() {
 
     ensure_root
     ensure_command lb
+    _acquire_lock
 
     log_stage "Validating Environment"
     validate || { log_error "Validation failed"; exit 1; }

@@ -15,7 +15,10 @@ jobs:
     steps:
       - name: Clean Workspace
         run: |
-          sudo umount -lf chroot/dev chroot/proc chroot/sys chroot/run 2>/dev/null || true
+          # Unmount all chroot mounts recursively
+          for mnt in $(mount 2>/dev/null | grep "$(pwd)/chroot" | awk '{print $3}' | sort -r); do
+            sudo umount -lf "$mnt" 2>/dev/null || true
+          done
           sudo umount -lf .build/ 2>/dev/null || true
           sudo rm -rf .build cache chroot binary output local
       - uses: actions/checkout@v4
@@ -30,7 +33,9 @@ jobs:
     steps:
       - name: Clean Workspace
         run: |
-          sudo umount -lf chroot/dev chroot/proc chroot/sys chroot/run 2>/dev/null || true
+          for mnt in $(mount 2>/dev/null | grep "$(pwd)/chroot" | awk '{print $3}' | sort -r); do
+            sudo umount -lf "$mnt" 2>/dev/null || true
+          done
           sudo umount -lf .build/ 2>/dev/null || true
           sudo rm -rf .build chroot binary output local
       - uses: actions/checkout@v4
@@ -56,7 +61,9 @@ jobs:
       - name: Post-Build Cleanup
         if: always()
         run: |
-          sudo umount -lf chroot/dev chroot/proc chroot/sys chroot/run 2>/dev/null || true
+          for mnt in $(mount 2>/dev/null | grep "$(pwd)/chroot" | awk '{print $3}' | sort -r); do
+            sudo umount -lf "$mnt" 2>/dev/null || true
+          done
           sudo umount -lf .build/ 2>/dev/null || true
           sudo rm -rf .build chroot binary output local
           # Keep cache/ for incremental builds

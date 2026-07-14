@@ -9,6 +9,9 @@ on:
     types: [published]
   workflow_dispatch:
 
+env:
+  GIT_CLEAN_EXCLUDES: --exclude=cache
+
 jobs:
   validate:
     runs-on: self-hosted
@@ -18,9 +21,13 @@ jobs:
           sudo umount -lf chroot/dev chroot/proc chroot/sys chroot/run 2>/dev/null || true
           sudo umount -lf .build/ 2>/dev/null || true
           sudo rm -rf .build chroot binary output local
+          sudo chown -R "$(whoami)" cache/ 2>/dev/null || true
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          clean: false
+      - name: Git Clean (preserve cache)
+        run: git clean -ffdx ${{ env.GIT_CLEAN_EXCLUDES }}
       - name: Validate Repository
         run: ./scripts/validate.sh
 
@@ -33,9 +40,13 @@ jobs:
           sudo umount -lf chroot/dev chroot/proc chroot/sys chroot/run 2>/dev/null || true
           sudo umount -lf .build/ 2>/dev/null || true
           sudo rm -rf .build chroot binary output local
+          sudo chown -R "$(whoami)" cache/ 2>/dev/null || true
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          clean: false
+      - name: Git Clean (preserve cache)
+        run: git clean -ffdx ${{ env.GIT_CLEAN_EXCLUDES }}
       - name: Build SynapseOS
         run: sudo ./build.sh
       - name: QEMU Boot Test
@@ -59,7 +70,8 @@ jobs:
           sudo umount -lf chroot/dev chroot/proc chroot/sys chroot/run 2>/dev/null || true
           sudo umount -lf .build/ 2>/dev/null || true
           sudo rm -rf .build chroot binary output local
-          # Keep cache/ for incremental builds
+          # Fix cache ownership for next checkout's git clean
+          sudo chown -R "$(whoami)" cache/ 2>/dev/null || true
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')

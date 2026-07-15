@@ -3,7 +3,7 @@ docker-compose
 python3
 python3-pip
 python3-venv
-python3-uv
+# python3-uv removed — not a Debian package; uv installed via pipx in branding hook
 nodejs
 npm
 pipx

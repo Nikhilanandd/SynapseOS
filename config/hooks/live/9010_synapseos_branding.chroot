@@ -32,13 +32,9 @@ cat > /etc/apt/sources.list.d/vscodium.list << EOF
 deb [arch=amd64 signed-by=/usr/share/keyrings/vscodium-archive-keyring.gpg] https://download.vscodium.com/debs vscodium main
 EOF
 
-# Pre-install uv for the live user
-if command -v uv &>/dev/null; then
-    uv tool install --version 2>/dev/null || true
-fi
-
-# Ensure pipx is ready
+# Install uv for the live user (via pipx since python3-uv doesn't exist in Debian)
 if command -v pipx &>/dev/null; then
+    pipx install uv 2>/dev/null || true
     pipx ensurepath 2>/dev/null || true
 fi
 

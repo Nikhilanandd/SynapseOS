@@ -181,17 +181,66 @@ config/hooks/live/
 
 ---
 
+### 6. AI-Native Toolchain — First-Boot Profile Installer (Session 6)
+
+Implemented a post-boot profile-based AI toolchain installer that keeps the ISO lean (~2.4 GB) and installs tools on first boot via a systemd oneshot service.
+
+**Architecture:**
+
+```
+First boot → synapse-firstboot.service
+  └── whiptail profile menu
+       ├── AI Developer (default) → VSCodium, OpenCode, Ollama, Aider, Jupyter, Streamlit
+       ├── AI Researcher          → Developer + PyTorch, LangChain, Transformers, Whisper
+       ├── AI Agent Builder       → Developer + AutoGen, CrewAI, LangChain, ChromaDB
+       └── Minimal                → Base system only
+```
+
+**New files:**
+
+| File | Purpose |
+|------|---------|
+| `config/includes.chroot/etc/systemd/system/synapse-firstboot.service` | systemd oneshot service, fires once via marker file at `/var/lib/synapse/setup-complete` |
+| `config/includes.chroot/usr/local/lib/synapse-firstboot.sh` | Main first-boot script: whiptail menu, reads profile .list, dispatches install commands |
+| `config/includes.chroot/usr/local/lib/synapse-install-tool` | Helper functions: `add_apt_repo()`, `install_deb_from_url()`, `ensure_pipx()` |
+| `config/includes.chroot/usr/local/lib/profiles/ai-developer.list` | ai-developer profile manifest (apt/pipx/uv/script commands) |
+| `config/includes.chroot/usr/local/lib/profiles/ai-researcher.list` | ai-researcher profile (adds pytorch, transformers, langchain, whisper, gradio) |
+| `config/includes.chroot/usr/local/lib/profiles/ai-agent.list` | ai-agent profile (adds autogen, crewai, langchain, chromadb) |
+| `config/includes.chroot/usr/local/lib/profiles/minimal.list` | minimal profile (empty — no extra tools) |
+| `config/includes.chroot/usr/local/lib/install-ollama.sh` | Ollama install via official script |
+| `config/includes.chroot/usr/local/lib/install-opencode.sh` | OpenCode install via binary or npm fallback |
+| `config/includes.chroot/usr/local/bin/synapse-setup` | CLI to re-run setup: `synapse-setup [profile-name]` |
+
+**Profile contents (post-boot installation):**
+
+| Tool | Method | Profile |
+|------|--------|---------|
+| **VSCodium** | APT (VSCodium repo) | All except minimal |
+| **OpenCode** | Binary install script | All except minimal |
+| **Ollama** | Official install script | All except minimal |
+| **aider** | `pipx install aider-chat` | All except minimal |
+| **jupyter-lab** | `pipx install jupyterlab` | All except minimal |
+| **streamlit** | `uv tool install streamlit` | All except minimal |
+| **langchain** | `uv pip install langchain` | Researcher, Agent |
+| **chromadb** | `uv pip install chromadb` | Researcher, Agent |
+| **transformers** | `uv pip install transformers` | Researcher |
+| **pytorch (CPU)** | `uv pip install torch` | Researcher |
+| **gradio** | `uv tool install gradio` | Researcher |
+| **whisper** | `uv tool install openai-whisper` | Researcher |
+| **autogen** | `uv pip install autogen-agentchat` | Agent |
+| **crewai** | `uv tool install crewai` | Agent |
+
+---
+
 ## Remaining Issues (Next Session)
 
-1. **First CI build**: Push to `develop` or `main` to trigger the pipeline. The bootstrap + package downloads for `task-gnome-desktop` (~3GB) will take 30-60 min. If it fails, check logs with `gh run view <run-id> --log-failed`.
+1. **Post-boot install testing**: Boot the ISO and verify each profile installs correctly. Check `synapse-setup` CLI works for re-running.
 
-2. **GNOME wallpaper rendering**: The SVG wallpaper uses gradients and opacity — confirm GNOME 43 (bookworm) renders it correctly. If not, convert to PNG.
+2. **GDM greeter branding**: The gschema overrides apply to the user session but not to GDM.
 
-3. **GDM greeter branding**: The gschema overrides apply to the user session but not to GDM. Add `config/includes.chroot/usr/share/glib-2.0/schemas/90_synapseos_gdm.gschema.override` for GDM theming (requires `gdm` user schema compilation).
+3. **GNOME wallpaper rendering**: Confirm SVG wallpaper renders in GNOME 43.
 
-4. **Edition profiles**: Developer, AI, Research, Student, Minimal editions would use different package lists and hooks.
-
-5. **ARM64 cross-build**: Needs `LB_BOOTSTRAP_QEMU_ARCHITECTURE="arm64"` and QEMU user static.
+4. **ARM64 cross-build**: Needs `LB_BOOTSTRAP_QEMU_ARCHITECTURE="arm64"` and QEMU user static.
 
 ---
 

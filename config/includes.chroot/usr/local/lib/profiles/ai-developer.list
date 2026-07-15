@@ -1,0 +1,19 @@
+# SynapseOS AI Developer Profile
+# Tools install in order listed via apt, pipx, uv, or script
+#
+# Each line: type  package/command  [post-install-notes]
+#
+# Types:
+#   apt    - install via apt
+#   pipx   - install via pipx
+#   uv     - install via uv tool
+#   script - run a custom install script
+#   npm    - install via npm -g
+#   binary - download a binary tarball
+
+apt       codium
+script    opencode
+script    ollama
+pipx      aider-chat
+pipx      jupyterlab
+uv        streamlit

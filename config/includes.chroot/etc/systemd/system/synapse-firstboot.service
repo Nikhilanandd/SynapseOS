@@ -1,0 +1,15 @@
+[Unit]
+Description=SynapseOS First Boot Setup
+After=network-online.target local-fs.target
+Wants=network-online.target
+ConditionPathExists=!/var/lib/synapse/setup-complete
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/lib/synapse-firstboot.sh
+RemainAfterExit=yes
+StandardOutput=journal+console
+StandardError=journal+console
+
+[Install]
+WantedBy=multi-user.target

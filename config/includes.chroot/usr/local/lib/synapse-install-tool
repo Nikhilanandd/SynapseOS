@@ -1,0 +1,61 @@
+#!/bin/bash
+# SynapseOS install helper functions
+# Sourced by synapse-firstboot.sh and synapse-setup
+
+# Ensure key system packages are present
+ensure_base_deps() {
+    local missing=()
+    for pkg in curl wget gpg apt-transport-https; do
+        if ! dpkg -l "$pkg" &>/dev/null 2>&1; then
+            missing+=("$pkg")
+        fi
+    done
+    if [ "${#missing[@]}" -gt 0 ]; then
+        apt-get install -y "${missing[@]}" 2>&1
+    fi
+}
+
+# Install a .deb from a URL
+install_deb_from_url() {
+    local url="$1"
+    local tmpdir
+    tmpdir=$(mktemp -d)
+    local deb="${tmpdir}/package.deb"
+    curl -fsSL "$url" -o "$deb"
+    dpkg -i "$deb" 2>/dev/null || apt-get install -fy 2>&1
+    rm -rf "$tmpdir"
+}
+
+# Add an APT repo securely
+add_apt_repo() {
+    local name="$1"
+    local key_url="$2"
+    local repo_line="$3"
+
+    local keyring="/usr/share/keyrings/${name}-archive-keyring.gpg"
+
+    if [ ! -f "$keyring" ]; then
+        curl -fsSL "$key_url" | gpg --dearmor -o "$keyring"
+    fi
+
+    local sources_list="/etc/apt/sources.list.d/${name}.list"
+    if [ ! -f "$sources_list" ]; then
+        echo "$repo_line" | sed "s|SIGNED_BY|${keyring}|g" > "$sources_list"
+    fi
+
+    apt-get update -qq 2>&1 || true
+}
+
+# Ensure pipx is initialized for the calling user
+ensure_pipx() {
+    if command -v pipx &>/dev/null; then
+        pipx ensurepath 2>/dev/null || true
+    fi
+}
+
+# Ensure uv is initialized
+ensure_uv() {
+    if command -v uv &>/dev/null; then
+        uv tool install --version 2>/dev/null || true
+    fi
+}

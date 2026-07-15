@@ -1,0 +1,15 @@
+# SynapseOS AI Researcher Profile
+# Everything in ai-developer plus heavy ML/data science tools
+
+apt       codium
+script    opencode
+script    ollama
+pipx      aider-chat
+pipx      jupyterlab
+uv        streamlit
+uv        gradio
+uv        openai-whisper
+uv        langchain
+uv        chromadb
+uv        transformers
+uv        torch

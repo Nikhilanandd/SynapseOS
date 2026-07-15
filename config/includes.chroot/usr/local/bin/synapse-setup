@@ -1,0 +1,48 @@
+#!/bin/bash
+# SynapseOS Setup Tool
+# Re-run the AI toolchain setup at any time.
+# Usage: synapse-setup [profile-name]
+
+set -euo pipefail
+
+PROFILES_DIR="/usr/local/lib/profiles"
+SETUP_SCRIPT="/usr/local/lib/synapse-firstboot.sh"
+MARKER_FILE="/var/lib/synapse/setup-complete"
+
+show_profiles() {
+    echo "Available profiles:"
+    echo ""
+    for f in "$PROFILES_DIR"/*.list; do
+        name=$(basename "$f" .list)
+        desc=$(head -2 "$f" | grep -v "^#" | tr '\n' ' ')
+        echo "  ${name}"
+    done
+    echo ""
+    echo "Current: $(cat "$MARKER_FILE" 2>/dev/null || echo 'none')"
+}
+
+if [ $# -eq 0 ]; then
+    # Re-run the interactive setup
+    rm -f "$MARKER_FILE"
+    exec bash "$SETUP_SCRIPT"
+fi
+
+case "$1" in
+    list|profiles|--help|-h)
+        show_profiles
+        ;;
+    *)
+        PROFILE="$1"
+        PROFILE_FILE="${PROFILES_DIR}/${PROFILE}.list"
+        if [ ! -f "$PROFILE_FILE" ]; then
+            echo "ERROR: Profile '${PROFILE}' not found."
+            echo ""
+            show_profiles
+            exit 1
+        fi
+        # Set the profile non-interactively
+        export PROFILE
+        rm -f "$MARKER_FILE"
+        exec bash "$SETUP_SCRIPT"
+        ;;
+esac

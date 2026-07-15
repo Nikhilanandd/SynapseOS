@@ -173,10 +173,13 @@ Hotfixes follow the same process from a maintenance branch.
 - [x] Desktop profiles (GNOME)
 - [x] SynapseOS branding (wallpaper, theming, os-release)
 - [x] QEMU boot verification
+- [x] AI toolchain installer (first-boot profile selector)
+- [x] VSCodium, OpenCode, Ollama, Aider, Jupyter, Streamlit
+- [x] AI Researcher profile (PyTorch, LangChain, Transformers, Whisper)
+- [x] AI Agent profile (AutoGen, CrewAI, LangChain, ChromaDB)
 - [ ] Desktop profiles (KDE, Sway)
-- [ ] Edition profiles (Developer, AI Edition, Student, Research)
+- [ ] Edition profiles (Research, Student)
 - [ ] NVIDIA GPU driver integration
-- [ ] AI/ML toolchain pre-installation
 - [ ] ARM64 cross-build support
 - [ ] Offline installer
 - [ ] Calamares graphical installer

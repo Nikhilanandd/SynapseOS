@@ -1,0 +1,13 @@
+# SynapseOS AI Agent Builder Profile
+# Everything in ai-developer plus agent frameworks
+
+apt       codium
+script    opencode
+script    ollama
+pipx      aider-chat
+pipx      jupyterlab
+uv        streamlit
+uv        langchain
+uv        chromadb
+uv        autogen-agentchat
+uv        crewai

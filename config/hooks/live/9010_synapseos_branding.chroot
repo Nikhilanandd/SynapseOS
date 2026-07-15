@@ -22,5 +22,25 @@ if [ -f /usr/share/glib-2.0/schemas/90_synapseos.gschema.override ]; then
     glib-compile-schemas /usr/share/glib-2.0/schemas/ 2>/dev/null || true
 fi
 
+# Enable SynapseOS first-boot setup service
+systemctl enable synapse-firstboot.service 2>/dev/null || true
+
+# Pre-install VSCodium repo for faster first-boot install
+curl -fsSL https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg \
+    | gpg --dearmor -o /usr/share/keyrings/vscodium-archive-keyring.gpg 2>/dev/null || true
+cat > /etc/apt/sources.list.d/vscodium.list << EOF
+deb [arch=amd64 signed-by=/usr/share/keyrings/vscodium-archive-keyring.gpg] https://download.vscodium.com/debs vscodium main
+EOF
+
+# Pre-install uv for the live user
+if command -v uv &>/dev/null; then
+    uv tool install --version 2>/dev/null || true
+fi
+
+# Ensure pipx is ready
+if command -v pipx &>/dev/null; then
+    pipx ensurepath 2>/dev/null || true
+fi
+
 # Remove unnecessary packages to save space
 apt-get clean
